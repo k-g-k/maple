@@ -5,28 +5,22 @@ import styled from "styled-components"
 import { useMediaQuery } from "usehooks-ts"
 import { SignInWithButton, signOutAndRedirectToHome, useAuth } from "./auth"
 import { Col, Container, Dropdown, Nav, Navbar, NavDropdown } from "./bootstrap"
-import { flags } from "./featureFlags"
 
 import {
   Avatar,
-  NavbarLinkBallotQuestions,
   DESKTOP_NAV_ITEM_CLASS,
   NavbarLinkAI,
   NavbarLinkAiTools,
-  NavbarLinkBills,
-  NavbarLinkHearings,
   NavbarLinkEditProfile,
   NavbarLinkEffective,
   NavbarLinkFAQ,
   NavbarLinkGoals,
   NavbarLinkInTheNews,
   NavbarLinkLogo,
-  NavbarLinkNewsfeed,
   NavbarLinkProcess,
   NavbarLinkSignOut,
   NavbarLinkSupport,
   NavbarLinkTeam,
-  NavbarLinkTestimony,
   NavbarLinkViewProfile,
   NavbarLinkWhyUse
 } from "./NavbarComponents"
@@ -71,15 +65,6 @@ const MobileNav: React.FC<React.PropsWithChildren<unknown>> = () => {
   const SiteLinks = () => {
     return (
       <Nav className="my-4">
-        <NavbarLinkBills handleClick={closeNav} />
-        {flags().ballotQuestions ? (
-          <NavbarLinkBallotQuestions handleClick={closeNav} />
-        ) : null}
-        {flags().hearingsAndTranscriptions ? (
-          <NavbarLinkHearings handleClick={closeNav} />
-        ) : null}
-        <NavbarLinkTestimony handleClick={closeNav} />
-        {authenticated ? <NavbarLinkNewsfeed handleClick={closeNav} /> : <></>}
         <NavDropdown className={"navLink-primary"} title={t("about")}>
           <NavbarLinkGoals handleClick={closeNav} />
           <NavbarLinkTeam handleClick={closeNav} />
@@ -210,36 +195,6 @@ const DesktopNav: React.FC<React.PropsWithChildren<unknown>> = () => {
       <div className={`me-auto`}>
         <NavbarLinkLogo />
       </div>
-
-      <div className={`align-self-center`}>
-        <NavbarLinkBills />
-      </div>
-
-      {flags().ballotQuestions ? (
-        <div className={`align-self-center`}>
-          <NavbarLinkBallotQuestions />
-        </div>
-      ) : null}
-
-      {flags().hearingsAndTranscriptions ? (
-        <div className={`align-self-center`}>
-          <NavbarLinkHearings />
-        </div>
-      ) : (
-        <></>
-      )}
-
-      <div className="align-self-center">
-        <NavbarLinkTestimony />
-      </div>
-
-      {authenticated ? (
-        <div className="align-self-center">
-          <NavbarLinkNewsfeed />
-        </div>
-      ) : (
-        <></>
-      )}
 
       <div className={`align-self-center`}>
         <Dropdown>

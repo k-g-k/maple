@@ -5,29 +5,17 @@ import styled from "styled-components"
 import { useMediaQuery } from "usehooks-ts"
 import { SignInWithButton, signOutAndRedirectToHome, useAuth } from "./auth"
 import { Col, Container, Dropdown, Nav, Navbar, NavDropdown } from "./bootstrap"
-import { flags } from "./featureFlags"
 
 import {
   Avatar,
-  NavbarLinkBallotQuestions,
   DESKTOP_NAV_ITEM_CLASS,
-  NavbarLinkAI,
-  NavbarLinkBills,
   NavbarLinkAiTools,
   NavbarLinkEffective,
-  NavbarLinkHearings,
   NavbarLinkProcess,
   NavbarLinkWhyUse,
   NavbarLinkEditProfile,
-  NavbarLinkFAQ,
-  NavbarLinkGoals,
-  NavbarLinkInTheNews,
   NavbarLinkLogo,
-  NavbarLinkNewsfeed,
   NavbarLinkSignOut,
-  NavbarLinkSupport,
-  NavbarLinkTeam,
-  NavbarLinkTestimony,
   NavbarLinkWritingTestimony,
   NavbarLinkViewProfile
 } from "./NavbarComponents"
@@ -72,24 +60,6 @@ const MobileNav: React.FC<React.PropsWithChildren<unknown>> = () => {
   const SiteLinks = () => {
     return (
       <Nav className="my-4">
-        <NavbarLinkBills handleClick={closeNav} />
-        {flags().ballotQuestions ? (
-          <NavbarLinkBallotQuestions handleClick={closeNav} />
-        ) : null}
-        {flags().hearingsAndTranscriptions ? (
-          <NavbarLinkHearings handleClick={closeNav} />
-        ) : null}
-        <NavbarLinkTestimony handleClick={closeNav} />
-        {authenticated ? <NavbarLinkNewsfeed handleClick={closeNav} /> : <></>}
-        <NavDropdown className={"navLink-primary"} title={t("about")}>
-          <NavbarLinkGoals handleClick={closeNav} />
-          <NavbarLinkTeam handleClick={closeNav} />
-          <NavbarLinkSupport handleClick={closeNav} />
-          <NavbarLinkInTheNews handleClick={closeNav} />
-          <NavbarLinkFAQ handleClick={closeNav} />
-          <NavbarLinkAI handleClick={closeNav} />
-        </NavDropdown>
-
         <NavDropdown className={"navLink-primary"} title={t("learn")}>
           <NavbarLinkEffective handleClick={closeNav} />
           <NavbarLinkWritingTestimony handleClick={closeNav} />
@@ -211,55 +181,6 @@ const DesktopNav: React.FC<React.PropsWithChildren<unknown>> = () => {
     >
       <div className={`me-auto`}>
         <NavbarLinkLogo />
-      </div>
-
-      <div className={`align-self-center`}>
-        <NavbarLinkBills />
-      </div>
-
-      {flags().ballotQuestions ? (
-        <div className={`align-self-center`}>
-          <NavbarLinkBallotQuestions />
-        </div>
-      ) : null}
-
-      {flags().hearingsAndTranscriptions ? (
-        <div className={`align-self-center`}>
-          <NavbarLinkHearings />
-        </div>
-      ) : (
-        <></>
-      )}
-
-      <div className="align-self-center">
-        <NavbarLinkTestimony />
-      </div>
-
-      {authenticated ? (
-        <div className="align-self-center">
-          <NavbarLinkNewsfeed />
-        </div>
-      ) : (
-        <></>
-      )}
-
-      <div className={`align-self-center`}>
-        <Dropdown>
-          <Dropdown.Toggle
-            variant="light"
-            className={`${DESKTOP_NAV_ITEM_CLASS}`}
-          >
-            {t("about")}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <NavbarLinkGoals />
-            <NavbarLinkTeam />
-            <NavbarLinkSupport />
-            <NavbarLinkInTheNews />
-            <NavbarLinkFAQ />
-            <NavbarLinkAI />
-          </Dropdown.Menu>
-        </Dropdown>
       </div>
 
       <div className={`align-self-center`}>

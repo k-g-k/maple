@@ -24,6 +24,10 @@ module.exports = {
       {
         source: "/policies",
         destination: "/policies/privacy-policy"
+      },
+      {
+        source: "/learn/comparison",
+        destination: "/comparison.html"
       }
     ]
     if (process.env.MCP_PROXY_URL) {

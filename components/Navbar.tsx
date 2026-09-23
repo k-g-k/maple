@@ -9,18 +9,12 @@ import { Col, Container, Dropdown, Nav, Navbar, NavDropdown } from "./bootstrap"
 import {
   Avatar,
   DESKTOP_NAV_ITEM_CLASS,
-  NavbarLinkAI,
   NavbarLinkAiTools,
   NavbarLinkEditProfile,
   NavbarLinkEffective,
-  NavbarLinkFAQ,
-  NavbarLinkGoals,
-  NavbarLinkInTheNews,
   NavbarLinkLogo,
   NavbarLinkProcess,
   NavbarLinkSignOut,
-  NavbarLinkSupport,
-  NavbarLinkTeam,
   NavbarLinkViewProfile,
   NavbarLinkWhyUse
 } from "./NavbarComponents"
@@ -65,15 +59,6 @@ const MobileNav: React.FC<React.PropsWithChildren<unknown>> = () => {
   const SiteLinks = () => {
     return (
       <Nav className="my-4">
-        <NavDropdown className={"navLink-primary"} title={t("about")}>
-          <NavbarLinkGoals handleClick={closeNav} />
-          <NavbarLinkTeam handleClick={closeNav} />
-          <NavbarLinkSupport handleClick={closeNav} />
-          <NavbarLinkFAQ handleClick={closeNav} />
-          <NavbarLinkAI handleClick={closeNav} />
-          <NavbarLinkInTheNews handleClick={closeNav} />
-        </NavDropdown>
-
         <NavDropdown className={"navLink-primary"} title={t("learn")}>
           <NavbarLinkEffective handleClick={closeNav} />
           <NavbarLinkProcess handleClick={closeNav} />
@@ -194,25 +179,6 @@ const DesktopNav: React.FC<React.PropsWithChildren<unknown>> = () => {
     >
       <div className={`me-auto`}>
         <NavbarLinkLogo />
-      </div>
-
-      <div className={`align-self-center`}>
-        <Dropdown>
-          <Dropdown.Toggle
-            variant="light"
-            className={`${DESKTOP_NAV_ITEM_CLASS}`}
-          >
-            {t("about")}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <NavbarLinkGoals />
-            <NavbarLinkTeam />
-            <NavbarLinkSupport />
-            <NavbarLinkFAQ />
-            <NavbarLinkAI />
-            <NavbarLinkInTheNews />
-          </Dropdown.Menu>
-        </Dropdown>
       </div>
 
       <div className={`align-self-center`}>

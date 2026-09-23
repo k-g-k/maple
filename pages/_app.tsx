@@ -17,6 +17,7 @@ import { wrapper } from "../components/store"
 import { Provider as Redux } from "react-redux"
 import { appWithTranslation } from "next-i18next"
 import nextI18NextConfig from "../next-i18next.config"
+import { useReportLocationToParent } from "../components/reportLocationToParent"
 /**
  * The root React component of the application. Next.js renders this, passing
  * the component of the current page. When you navigate to a new page, Next.js
@@ -29,6 +30,7 @@ import nextI18NextConfig from "../next-i18next.config"
  */
 function App({ Component, ...rest }: AppPropsWithLayout) {
   const { store, props } = wrapper.useWrappedStore(rest)
+  useReportLocationToParent()
   return (
     <Redux store={store}>
       {props.router.pathname === "/admin" ? (

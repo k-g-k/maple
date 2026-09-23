@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MAPLE Redesign Comparison</title>
+    <!--
+      Shows the redesigned MAPLE Learn pages or the original ones, with a
+      floating panel in the bottom-left corner to switch versions and step
+      through the pages (chevrons or arrow keys; the title opens the full
+      list). Served at /learn/comparison via a rewrite in next.config.js.
+
+      The original loads from this same deployment. The redesign loads from
+      the redesign-compare preview, or from localhost:3002 when this page runs
+      locally. Point it elsewhere with ?redesign=https://example.org
+
+      Both versions stay loaded. Each posts its location to this page (see
+      components/reportLocationToParent.ts), and whenever the visible one
+      moves, the hidden one is sent to the matching page using the map below.
+      Switching is then instant and lands in the right place. In reply, each
+      version is told which pages it may link to; its other links are disabled.
+    -->
+    <style>
+      :root {
+        --bar-bg: #ffffff;
+        --bar-text: #1a1a1a;
+        --bar-muted: #f0f0f0;
+        --bar-line: #e2e2e2;
+        /* MAPLE brand primary, and a pale tint of it */
+        --maple-blue: #1a3185;
+        --maple-blue-tint: #e8ecf7;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #ffffff;
+      }
+      .bar {
+        position: fixed;
+        left: 16px;
+        bottom: 16px;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
+        background: var(--bar-bg);
+        border: 1px solid var(--bar-line);
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 13px;
+        width: 265px;
+        max-width: calc(100vw - 32px);
+        box-sizing: border-box;
+      }
+      .switch {
+        display: flex;
+        gap: 2px;
+        border-radius: 999px;
+        background: var(--bar-muted);
+      }
+      .bar .switch button {
+        flex: 1;
+        padding: 8px 14px;
+      }
+      .pages {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .pages[hidden] {
+        display: none;
+      }
+      .stepper {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .bar .stepper .chevron {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+      }
+      .bar .chevron:hover {
+        background: var(--bar-muted);
+      }
+      .bar .current {
+        flex: 1;
+        min-width: 0;
+        padding: 6px 8px;
+        border-radius: 6px;
+        text-align: left;
+      }
+      .bar .current:hover {
+        background: var(--bar-muted);
+      }
+      .bar .name {
+        display: block;
+      }
+      .bar .count {
+        display: block;
+        margin-top: 4px;
+        font-size: 11px;
+        opacity: 0.65;
+      }
+      .bar button {
+        font: inherit;
+        padding: 6px 14px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--bar-text);
+        cursor: pointer;
+      }
+      .bar button[aria-pressed="true"] {
+        background: var(--maple-blue);
+        color: #ffffff;
+      }
+      .bar a {
+        padding: 6px 12px;
+        border-radius: 6px;
+        color: var(--bar-text);
+        text-decoration: none;
+      }
+      /* The line under each label: the label's own color, faded */
+      .bar .change {
+        display: block;
+        margin-top: 1px;
+        font-size: 11.5px;
+        font-style: italic;
+        opacity: 0.65;
+      }
+      .bar a:hover {
+        background: var(--bar-muted);
+      }
+      .bar a[aria-current="page"] {
+        background: var(--maple-blue-tint);
+      }
+      /* The full list shows labels only, with a check on the current page */
+      .pages .change {
+        display: none;
+      }
+      /* The labels line up with the stepper's title, 44px in (32px chevron +
+         4px gap + 8px padding). The check is centered in that space:
+         14px + 16px check + 14px gap. */
+      .pages a {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding-left: 14px;
+      }
+      /* Every row keeps a slot for the check so the labels stay aligned */
+      .pages a::before {
+        content: "";
+        flex: none;
+        width: 16px;
+        height: 16px;
+      }
+      .pages a[aria-current="page"]::before {
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%231a3185'/%3E%3Cpath d='M4.75 8.25 7 10.5l4.25-4.75' fill='none' stroke='white' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+          center / contain no-repeat;
+      }
+      .bar :focus-visible {
+        outline: 2px solid var(--maple-blue);
+        outline-offset: 2px;
+      }
+      .frames {
+        position: fixed;
+        inset: 0;
+      }
+      iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #ffffff;
+      }
+      iframe[data-hidden] {
+        visibility: hidden;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <div class="switch" role="group" aria-label="Site version">
+        <button type="button" data-show="redesign" aria-pressed="true">
+          Redesign
+        </button>
+        <button type="button" data-show="original" aria-pressed="false">
+          Original
+        </button>
+      </div>
+      <nav class="pages" id="pages" aria-label="Learn pages" hidden></nav>
+      <div class="stepper">
+        <button type="button" class="chevron" data-step="-1" aria-label="Previous page">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button type="button" class="current" aria-expanded="false" aria-controls="pages">
+          <span class="name"></span>
+          <span class="change"></span>
+          <span class="count"></span>
+        </button>
+        <button type="button" class="chevron" data-step="1" aria-label="Next page">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="frames">
+      <iframe id="redesign" title="Redesigned MAPLE"></iframe>
+      <iframe id="original" title="Original MAPLE" data-hidden></iframe>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(location.search)
+      const isLocal = location.hostname === "localhost"
+      const BASE = {
+        original: params.get("original") || location.origin,
+        redesign:
+          params.get("redesign") ||
+          (isLocal
+            ? "http://localhost:3002"
+            : "https://maple-git-redesign-compare-k-g-k-projects.vercel.app")
+      }
+
+      // The Learn pages, named and addressed as in the redesign's Learn menu,
+      // plus two sections of How Testimony Works that were tabs in the
+      // original.
+      // Each entry: label, redesign address, and a line on what changed, worded
+      // as original to redesign so it reads right in either view.
+      const PAGES = [
+        [
+          "How Testimony Works",
+          "/learn/testimony",
+          "Fixed readability issues and reworked content"
+        ],
+        [
+          "Role of Testimony",
+          "/learn/testimony#role-of-testimony",
+          "Hidden in tab, now displayed in context"
+        ],
+        [
+          "Communicating Tips",
+          "/learn/testimony#communicating-with-legislators",
+          "Hidden in tab, now displayed in context"
+        ],
+        [
+          "Writing Tips",
+          "/learn/writing-effective-testimony",
+          "Upgraded to its own page"
+        ],
+        [
+          "MA Legislative Process",
+          "/learn/legislative-process",
+          "Consolidated content, added rail and visual sequencing"
+        ],
+        [
+          "Why Use MAPLE",
+          "/why-use-maple/for-individuals",
+          "Fixed IA issues, added progressive disclosure"
+        ],
+        [
+          "AI Research Tools",
+          "/learn/ai-tools",
+          "Streamlined content and fixed visual spacing"
+        ]
+      ]
+
+      // The page shown when the comparison first loads
+      const START = "/learn/legislative-process"
+
+      // Pages whose address differs between the two versions. Anything not
+      // listed is assumed to live at the same address on both.
+      const ORIGINAL_TO_REDESIGN = {
+        "/learn/testimony-basics": "/learn/testimony",
+        "/learn/role-of-testimony": "/learn/testimony#role-of-testimony",
+        "/learn/communicating-with-legislators":
+          "/learn/testimony#communicating-with-legislators"
+      }
+      const REDESIGN_TO_ORIGINAL = {}
+      for (const [from, to] of Object.entries(ORIGINAL_TO_REDESIGN))
+        REDESIGN_TO_ORIGINAL[to] = from
+
+      const trim = path => path.replace(/\/+(?=#|$)/, "") || "/"
+      const withoutHash = path => path.split("#")[0]
+
+      // The matching page on the other version.
+      function match(from, path) {
+        path = trim(path)
+        if (from === "original")
+          return ORIGINAL_TO_REDESIGN[withoutHash(path)] || path
+        return (
+          REDESIGN_TO_ORIGINAL[path] ||
+          REDESIGN_TO_ORIGINAL[withoutHash(path)] ||
+          path
+        )
+      }
+
+      // Pages each version may link to. Every other link in the sites is
+      // disabled. A path also covers the pages under it, so /why-use-maple
+      // keeps all three persona tabs.
+      const showcased = PAGES.map(([, path]) =>
+        path.startsWith("/why-use-maple") ? "/why-use-maple" : withoutHash(path)
+      )
+      const ALLOWED = {
+        redesign: showcased,
+        original: [
+          ...new Set([
+            ...showcased.map(path => withoutHash(match("redesign", path))),
+            ...Object.keys(ORIGINAL_TO_REDESIGN)
+          ])
+        ]
+      }
+
+      const other = side => (side === "original" ? "redesign" : "original")
+      const frames = {
+        original: document.getElementById("original"),
+        redesign: document.getElementById("redesign")
+      }
+      const current = { original: null, redesign: null }
+      let visible = "redesign"
+      // Which entry of PAGES is showing
+      let index = 0
+      const nav = document.querySelector(".pages")
+
+      function go(side, path) {
+        current[side] = trim(path)
+        frames[side].src = BASE[side] + current[side]
+      }
+
+      function open(redesignPath) {
+        go("redesign", redesignPath)
+        go("original", match("redesign", redesignPath))
+        markPage()
+      }
+
+      // Highlight the page being shown. A section button wins over its page
+      // when the visitor is on that section. The three persona tabs of Why
+      // Use MAPLE all count as that one page.
+      function markPage() {
+        const here =
+          visible === "redesign"
+            ? current.redesign || ""
+            : match("original", current.original || "")
+        const links = [...document.querySelectorAll(".pages a")]
+        const onSection = links.some(link => link.dataset.path === here)
+        links.forEach((link, i) => {
+          const path = link.dataset.path
+          const on = onSection
+            ? path === here
+            : path.startsWith("/why-use-maple")
+            ? here.startsWith("/why-use-maple")
+            : withoutHash(here) === path
+          if (on) {
+            link.setAttribute("aria-current", "page")
+            index = i
+          } else link.removeAttribute("aria-current")
+        })
+        showStep()
+      }
+
+      // Fill the stepper with the current entry. If the visitor wandered off
+      // the showcased pages, it keeps showing the last one they were on.
+      const stepper = document.querySelector(".stepper")
+      const title = stepper.querySelector(".current")
+      function showStep() {
+        const [label, , change] = PAGES[index]
+        title.querySelector(".name").textContent = label
+        title.querySelector(".change").textContent = change
+        title.querySelector(".count").textContent =
+          `${index + 1} of ${PAGES.length}`
+      }
+
+      // Steps wrap around, so the last page leads back to the first.
+      function step(by) {
+        index = (index + by + PAGES.length) % PAGES.length
+        open(PAGES[index][1])
+      }
+
+      function setListOpen(isOpen) {
+        nav.hidden = !isOpen
+        title.setAttribute("aria-expanded", String(isOpen))
+      }
+
+      for (const chevron of stepper.querySelectorAll("[data-step]"))
+        chevron.addEventListener("click", () => step(Number(chevron.dataset.step)))
+      title.addEventListener("click", () => setListOpen(nav.hidden))
+
+      // Arrow keys step through the pages. They only reach this page when the
+      // site itself doesn't have focus.
+      document.addEventListener("keydown", event => {
+        if (event.key === "ArrowLeft") step(-1)
+        else if (event.key === "ArrowRight") step(1)
+        else if (event.key === "Escape") setListOpen(false)
+      })
+
+      // The visible version moved, so send the hidden one to the matching
+      // page. Reports from the hidden version only update where it is.
+      window.addEventListener("message", event => {
+        if (event.data?.type !== "maple-location") return
+        const side = Object.keys(frames).find(
+          k => frames[k].contentWindow === event.source
+        )
+        if (!side) return
+        event.source.postMessage(
+          { type: "maple-allowed", paths: ALLOWED[side] },
+          "*"
+        )
+        current[side] = trim(event.data.path)
+        if (side !== visible) return
+        markPage()
+        const target = match(side, current[side])
+        if (target !== current[other(side)]) go(other(side), target)
+      })
+
+      for (const button of document.querySelectorAll("[data-show]"))
+        button.addEventListener("click", () => {
+          visible = button.dataset.show
+          for (const side of Object.keys(frames))
+            frames[side].toggleAttribute("data-hidden", side !== visible)
+          for (const b of document.querySelectorAll("[data-show]"))
+            b.setAttribute("aria-pressed", String(b === button))
+          markPage()
+        })
+
+      for (const [label, path, change] of PAGES) {
+        const link = document.createElement("a")
+        link.href = "#"
+        const name = document.createElement("span")
+        name.className = "name"
+        name.textContent = label
+        const sub = document.createElement("span")
+        sub.className = "change"
+        sub.textContent = change
+        link.append(name, sub)
+        link.dataset.path = path
+        link.addEventListener("click", event => {
+          event.preventDefault()
+          setListOpen(false)
+          open(path)
+        })
+        nav.append(link)
+      }
+
+      open(START)
+    </script>
+  </body>
+</html>

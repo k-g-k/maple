@@ -11,7 +11,8 @@
       list). Served at /learn/comparison via a rewrite in next.config.js.
 
       The original loads from this same deployment. The redesign loads from
-      the redesign-compare preview, or from localhost:3002 when this page runs
+      maple-redesign-compare.vercel.app (the production build of the
+      redesign-compare branch), or from localhost:3002 when this page runs
       locally. Point it elsewhere with ?redesign=https://example.org
 
       Both versions stay loaded. Each posts its location to this page (see
@@ -232,7 +233,7 @@
           params.get("redesign") ||
           (isLocal
             ? "http://localhost:3002"
-            : "https://maple-git-redesign-compare-k-g-k-projects.vercel.app")
+            : "https://maple-redesign-compare.vercel.app")
       }
 
       // The Learn pages, named and addressed as in the redesign's Learn menu,

@@ -4,7 +4,7 @@ import { Carousel, CarouselItem } from "react-bootstrap"
 import { useMediaQuery } from "usehooks-ts"
 import { Col, Container, Row } from "../bootstrap"
 import { useRecentTestimony } from "../db"
-import TestimonyCallout from "./TestimonyCallout"
+import TestimonyBubble from "./TestimonyBubble"
 import { useTranslation } from "next-i18next"
 import { Internal } from "components/links"
 import styles from "components/homepage/Homepage.module.css"
@@ -37,7 +37,7 @@ export default function TestimonyCalloutSection() {
           {recentTestimony?.map(testimony => (
             <Carousel.Item key={testimony.authorUid + testimony.billId}>
               <div style={{ width: "100%", height: "100%" }}>
-                <TestimonyCallout {...testimony} />
+                <TestimonyBubble {...testimony} />
               </div>
             </Carousel.Item>
           ))}
@@ -45,9 +45,13 @@ export default function TestimonyCalloutSection() {
       ) : (
         <Row className="justify-content-center">
           <Col xs={11} xl={11} xxl={11}>
-            <Row xs={1} lg={2} className={`g-3 justify-content-between py-2`}>
+            <Row
+              xs={1}
+              lg={2}
+              className={`gx-5 gy-3 justify-content-between py-2`}
+            >
               {recentTestimony?.map(testimony => (
-                <TestimonyCallout
+                <TestimonyBubble
                   key={testimony.authorUid + testimony.billId}
                   {...testimony}
                 />

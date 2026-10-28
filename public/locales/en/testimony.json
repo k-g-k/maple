@@ -63,6 +63,7 @@
   },
   "testimonyCallout": {
     "bill": "Bill",
+    "byline": "- {{author}} on <1>{{bill}}</1>",
     "position": "{{position1}}"
   },
   "testimonyCalloutSection": {

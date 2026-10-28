@@ -2,14 +2,14 @@ import { useTranslation } from "next-i18next"
 import Image from "react-bootstrap/Image"
 
 import styles from "./Homepage.module.css"
+import TopicChips from "./TopicChips"
 
 import { NEWSLETTER_SIGNUP_URL, TRAINING_CALENDAR_URL } from "components/common"
 import { Internal } from "components/links"
 
 /**
- * The homepage hero, laid out like main's: the statehouse in its own column
- * on the left, the title, body copy and buttons on the right, over the
- * skyline.
+ * The homepage hero, over the skyline: the title, body copy and buttons on the
+ * left, and the topics panel on the right with a small statehouse under it.
  */
 export default function HeroSection() {
   const { t } = useTranslation("homepage")
@@ -75,8 +75,15 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* The statehouse in its own column. */}
+          {/* The statehouse, behind the topics panel (the grid places it). */}
           <span className={styles.statehouseColumn} aria-hidden="true" />
+
+          {/* The topics panel: a heading and the six topics, each a link to
+              its bills. */}
+          <div className={styles.heroTopics}>
+            <p className={styles.heroTopicsLabel}>{t("topicsHeading")}</p>
+            <TopicChips />
+          </div>
         </div>
       </div>
     </section>

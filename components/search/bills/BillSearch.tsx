@@ -1,6 +1,5 @@
 import { TFunction, useTranslation } from "next-i18next"
 import {
-  CurrentRefinements,
   Hits,
   InstantSearch,
   Pagination,
@@ -18,6 +17,7 @@ import { Col, Container, Row, Spinner } from "../../bootstrap"
 import { NoResults } from "../NoResults"
 import { ResultCount } from "../ResultCount"
 import { SearchContainer } from "../SearchContainer"
+import { CollapsibleRefinements } from "../CollapsibleRefinements"
 import { SearchErrorBoundary } from "../SearchErrorBoundary"
 import { BillHit } from "./BillHit"
 import { useBillRefinements } from "./useBillRefinements"
@@ -197,7 +197,7 @@ const Layout: FC<
           />
           {refinements.show}
         </RefinementRow>
-        <CurrentRefinements
+        <CollapsibleRefinements
           excludedAttributes={["nextHearingAt"]}
           transformItems={extractLastSegmentOfRefinements}
         />

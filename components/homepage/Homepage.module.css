@@ -982,18 +982,21 @@
   }
 }
 
-/* The hero laid out like main's, with the statehouse in its own column, the
-   wider one on the left; the copy sits on the right, vertically centred in a
-   band about the Digital Democracy hero's height, and the content is capped
-   at main's 1120px. The statehouse is 27rem, the size main's works out to,
-   flush on the bottom edge. Stacked, it comes first, as the stacked hero
-   already does. Prefixed with .heroSection so these win over the base hero
-   rules. */
+/* The hero's two columns: on the left the copy, with a 19.5rem statehouse
+   under it, near the bottom edge; on the right the topics panel,
+   38rem wide, its top level with the copy's. The content is capped at main's
+   1120px. Stacked, the statehouse comes first, then the
+   copy, then the panel. Prefixed with .heroSection so these win over the
+   base hero rules. */
 .statehouseColumn {
   display: block;
   aspect-ratio: 487 / 326;
   background: url("/statehouse.svg") no-repeat bottom center / contain;
   pointer-events: none;
+  /* Above the skyline layer (.skylineBackground) at every width, or the
+     skyline's navy paints over it and it looks see-through. */
+  position: relative;
+  z-index: 1;
 }
 
 @media (min-width: 1101px) {
@@ -1004,34 +1007,152 @@
     padding-right: 0;
   }
 
+  /* At least about the Digital Democracy hero's height, which the skyline is
+     sized for (it scales with the width, not the height). The copy and its
+     buttons on the left and the topics panel on the right, each centred down
+     the band, with the statehouse behind the panel (below). Positioned, so
+     the statehouse can be placed against the panel's column. The gap is
+     between the columns only. */
   .heroSection.heroStatehouse .hero {
-    grid-template-columns: minmax(30rem, 2fr) minmax(30rem, 1.05fr);
+    position: relative;
+    grid-template-columns: minmax(0, 1fr) 38rem;
+    grid-template-rows: 1fr;
     justify-content: normal;
     align-items: center;
-    gap: clamp(1.8rem, 4vw, 10rem);
-    padding-top: 0;
+    column-gap: clamp(1.8rem, 4vw, 10rem);
+    row-gap: 0;
+    padding-top: 3rem;
     padding-bottom: 0;
-    /* About the Digital Democracy hero's height on desktop, as a floor so
-       longer copy grows the band rather than overflowing it. */
-    min-height: 610px;
+    min-height: 750px;
   }
 
+  /* Centred down the band, then 2rem higher. */
   .heroSection.heroStatehouse .heroContent {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    padding-top: 0;
+    padding-bottom: 3rem;
+    transform: translateY(-2rem);
+  }
+
+  /* The panel and the statehouse move right together, by a third of the
+     margin beyond the 1120px content edge, so they sit further into the
+     right-hand area. With no margin (below about 1150px) they stay in
+     place. */
+  .heroSection.heroStatehouse :is(.heroTopics, .statehouseColumn) {
+    transform: translateX(max(0px, calc((100vw - 1120px) / 6)));
+  }
+
+  /* Centred down the band, then 5.1rem higher. The transform repeats the
+     sideways move above, as it replaces it. */
+  .heroSection.heroStatehouse .heroTopics {
     grid-column: 2;
     grid-row: 1;
     align-self: center;
-    /* Centred in the 610px band; this is only the least room kept above and
-       below the copy. */
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    transform: translate(max(0px, calc((100vw - 1120px) / 6)), -5.1rem);
   }
 
+  /* Behind the panel: out of the flow, placed against the panel's column
+     (the grid area is its containing block), centred under the panel and
+     flush on the bottom edge. Under the panel (which is z-index 1) but over
+     the skyline layer, which comes before it. It moves sideways with the
+     panel (above), so it stays centred under it. */
   .heroSection.heroStatehouse .statehouseColumn {
-    grid-column: 1;
+    position: absolute;
+    z-index: 0;
+    grid-column: 2;
     grid-row: 1;
-    align-self: end;
-    justify-self: center;
-    width: 27rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 24rem;
+  }
+}
+
+/* The topics panel, brought back from the Digital Democracy hero without its
+   search field: a heading and the six topics on white that fades from 95%
+   at the bottom to 75% at the top, so the skyline shows more towards the
+   top. */
+.heroTopics {
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.75)
+  );
+  padding: 2rem 1.5rem;
+  /* Above the skyline layer (.skylineBackground), as the copy is, or the
+     skyline's navy paints over the panel and dims it. */
+  position: relative;
+  z-index: 1;
+}
+
+.heroTopicsLabel {
+  color: var(--hero-heading-ink);
+  font-size: 1.3rem;
+  /* Lighter than the hero title, so the panel heading sits below it. */
+  font-weight: 500;
+  margin: 0 0 1.5rem;
+}
+
+/* Two even columns rather than wrapping flex, so the rows line up instead of
+   breaking wherever the labels happen to run out. */
+.topicChips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+/* Each chip is a link, its whole area clickable: padded, with the padding
+   taken back by a negative margin so the discs still line up with the
+   heading. */
+.topicChip {
+  align-items: center;
+  border-radius: var(--maple-radius-md);
+  color: var(--hero-ink-body);
+  display: flex;
+  font-family: var(--maple-font-body);
+  font-size: 0.95rem;
+  gap: 0.45rem;
+  line-height: 1.2;
+  margin: -0.35rem -0.5rem;
+  padding: 0.35rem 0.5rem;
+  text-decoration: none;
+  transition: background-color var(--maple-transition-fast);
+  white-space: nowrap;
+}
+
+/* On hover, a neutral shade (black at 3%) rather than a tinted grey; the
+   text keeps its colour rather than taking a link's. */
+.topicChip:hover,
+.topicChip:focus-visible {
+  background-color: rgba(0, 0, 0, 0.03);
+  color: var(--hero-ink-body);
+}
+
+/* Keyboard focus still shows, as a ring round the chip. */
+.topicChip:focus-visible {
+  box-shadow: 0 0 0 0.25rem var(--maple-focus-ring);
+  outline: none;
+}
+
+.topicChipDisc {
+  align-items: center;
+  border-radius: 50%;
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 1.15rem;
+  height: 2.8rem;
+  justify-content: center;
+  width: 2.8rem;
+}
+
+/* One column on a phone: the labels do not wrap, so two columns would run past
+   the edge of the screen. */
+@media (max-width: 900px) {
+  .topicChips {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1044,10 +1165,18 @@
 }
 
 @media (max-width: 1100px) {
+  .heroSection.heroStatehouse .heroTopics {
+    order: 3;
+    justify-self: center;
+    width: 100%;
+    max-width: 38rem;
+    margin-bottom: 2rem;
+  }
+
   .heroSection.heroStatehouse .statehouseColumn {
     order: 1;
     justify-self: center;
-    width: min(24rem, 70%);
+    width: min(16rem, 60%);
   }
 
   /* Stacked, the buttons stack too, centred under the centred copy, as this

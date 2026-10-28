@@ -15,12 +15,55 @@ export const SearchContainer = styled.div`
     margin-bottom: auto;
   }
 
+  /* Each filter's group: its label ("Tags:", "Court:") and its tags, which
+     wrap onto more lines rather than running off the page, as a topic from
+     the homepage selects dozens of them. The group itself has no ground, so
+     the tags read as separate pills rather than one block. */
   .ais-CurrentRefinements-item {
+    background: none;
+    color: var(--maple-text-body);
+    border: none;
+    padding: 0;
+    font-size: 0.75rem;
+    flex-wrap: wrap;
+    column-gap: 0.5rem;
+    row-gap: 0.5rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Each tag, and the group's label, stays on one line. */
+  .ais-CurrentRefinements-label,
+  .ais-CurrentRefinements-category {
+    white-space: nowrap;
+  }
+
+  /* Each tag its own green pill, spaced by the group's gap rather than
+     InstantSearch's margin. */
+  .ais-CurrentRefinements-category {
+    align-items: center;
     background-color: var(--bs-green);
     color: var(--maple-text-inverse);
-    border: none;
-    font-size: 0.75rem;
     border-radius: 0.75rem;
+    padding: 0.05rem 0.5rem;
+    margin-left: 0;
+  }
+
+  /* The "+ N more" and "Show less" button that folds a long group of tags
+     (./CollapsibleRefinements.tsx): a pill like the tags, in outline. */
+  .ais-CurrentRefinements-more {
+    background: none;
+    border: 1px solid var(--maple-surface-border);
+    border-radius: 0.75rem;
+    color: var(--maple-text-body);
+    font-size: inherit;
+    line-height: 1.5;
+    padding: 0.05rem 0.5rem;
+    white-space: nowrap;
+  }
+
+  .ais-CurrentRefinements-more:hover {
+    border-color: var(--maple-text-body);
   }
 
   .ais-CurrentRefinements--noRefinement {

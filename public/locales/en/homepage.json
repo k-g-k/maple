@@ -43,6 +43,15 @@
     "bodytext": "We help you craft your testimony, publish it to the community, and send it directly to the right legislators.",
     "title": "How"
   },
+  "topics": {
+    "climate": "Climate, Energy & Environment",
+    "democracy": "Government, Rights & Safety",
+    "education": "Education, Youth & Families",
+    "health": "Healthcare & Human Services",
+    "housing": "Housing, Transit & Community",
+    "work": "Work, Money, Business & Tech"
+  },
+  "topicsHeading": "Learn about legislation that matters to you",
   "what": {
     "bodytext": "MAPLE makes it easy to submit testimony and see testimony submitted by others.",
     "title": "What"

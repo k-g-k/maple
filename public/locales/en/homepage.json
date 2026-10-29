@@ -12,10 +12,11 @@
     "title": "What does MAPLE do?"
   },
   "features": {
+    "action": "Get Started",
     "publish": "Share your perspective directly with the State House. Submit written testimony to make your voice part of the legislative process.",
     "research": "Explore bills and policy changes on topics that matter to you. Search by keyword, committee, or legislator.",
     "share": "Read testimony from organizations and constituents across the Commonwealth to get informed on the issues of the day.",
-    "title": "Features"
+    "title": "How to use MAPLE"
   },
   "hearings": {
     "action": "Browse Hearings",

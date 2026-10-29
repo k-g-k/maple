@@ -14,10 +14,10 @@ export default createPage({
       {/* The hero laid out like main's, with main's copy and the statehouse
           in place of the right-hand panel. */}
       <HeroSection />
-      <TestimonyCalloutSection />
       <DidYouKnowSection />
       <ExplainerSection />
       <FeaturesSection />
+      <TestimonyCalloutSection />
       <HearingsSection />
     </main>
   )

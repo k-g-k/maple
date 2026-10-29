@@ -13,13 +13,15 @@ export default function ExplainerSection() {
           <div className={styles.explainerCopy}>
             <h2 className={styles.explainerTitle}>{t("explainer.title")}</h2>
             <p className={styles.explainerBody}>{t("explainer.body")}</p>
-            {/* explainerAction: the secondary style (Homepage.module.css). */}
-            <Internal
+            {/* Out on this branch: Get Started, which How to use MAPLE now
+                has. explainerAction: the secondary style
+                (Homepage.module.css). */}
+            {/* <Internal
               href="/bills"
               className={`${styles.primaryAction} ${styles.explainerAction}`}
             >
               {t("explainer.action")}
-            </Internal>
+            </Internal> */}
           </div>
           <div className={styles.explainerVisual}>
             <Image

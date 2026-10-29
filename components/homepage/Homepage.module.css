@@ -24,9 +24,13 @@
 .browseTestimony {
   display: flex;
   justify-content: flex-end;
-  /* In line with the right edge of the testimony grid, which is 11 of 12
-     columns, centred. */
-  padding: 1rem calc(100% / 24) 0;
+  /* In line with the right edge of the feed, which is as wide as this,
+     centred (components/TestimonyCallout/TestimonyFeed). Then the 5rem the
+     sections keep at their bottoms, inside the section's grey band
+     (.testimonyBand). */
+  margin: 0 auto;
+  max-width: 48rem;
+  padding: 1rem 0 5rem;
 }
 
 .browseTestimonyLink {
@@ -232,6 +236,13 @@
   margin: 0 0 2.25rem;
 }
 
+/* What people are saying... on a full-width band of the page's grey, the
+   hero's ground, with its content in the usual column, so the feed's white
+   panel stands on it. */
+.testimonyBand {
+  background: var(--maple-surface-page);
+}
+
 .factGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -301,6 +312,12 @@
   border-radius: 0.25rem;
 }
 
+/* The MAPLE logo beside What does MAPLE do?, a little smaller than the
+   column it sits in. */
+.appPreview {
+  width: min(100%, 18rem);
+}
+
 .featurePreview {
   box-shadow: 0 0.7rem 1.5rem rgba(17, 25, 58, 0.18);
 }
@@ -325,6 +342,11 @@
 .featureList {
   display: grid;
   gap: 1.55rem;
+}
+
+/* Get Started, after the three features, at its own width. */
+.featuresAction {
+  justify-self: start;
 }
 
 .featureItem {
@@ -385,6 +407,18 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.15rem 2rem;
+}
+
+/* The hearings indented to start and end where Did You Know?'s facts do,
+   while the title and Browse Hearings keep the full width. Each fact's text
+   is at most 18rem (.factText), centred in a third of the row less the grid's
+   gaps (5rem) and the card's padding (0.75rem a side), so its outer edge is
+   0.75rem in, plus half of whatever room the text leaves: 100% / 6 - 9.83rem.
+   Above 900px, where the facts sit three across. */
+@media (min-width: 901px) {
+  .hearingGrid {
+    padding-inline: max(0.75rem, calc(100% / 6 - 9.83rem));
+  }
 }
 
 .hearingCard {
@@ -494,7 +528,7 @@
   }
 
   /* Room under Browse All Testimony, the testimony section's last line, as
-     the sections below keep under theirs, so the gap before Did You Know?
+     the sections below keep under theirs, so the gap before the next section
      matches the gaps between them. */
   .browseTestimony {
     padding-bottom: 2rem;
@@ -583,6 +617,10 @@
     font-size: 1.85rem;
     margin-bottom: 1.2rem;
     text-align: center;
+  }
+
+  .featuresAction {
+    justify-self: center;
   }
 
   .factText {
@@ -847,8 +885,8 @@
   font-weight: 600;
 }
 
-/* From 1101px the .heroStatehouse rules further down set all three of these.
-   Below that the grid is one column (the 1100px block), so the gap here is the
+/* From 1200px the .heroStatehouse rules further down set all three of these.
+   Below that the grid is one column (the 1199px block), so the gap here is the
    space between the stacked statehouse and copy. */
 .hero {
   grid-template-columns: max-content max-content;
@@ -877,15 +915,55 @@
   flex-direction: column;
 }
 
-/* A slightly wider content column than the default 1120px. */
-:root .sectionShell,
+/* The sections below the hero sit in Bootstrap's container widths: the full
+   width less 1rem a side on phones, then 540px, 720px, 960px (lg) and 1140px
+   (xl) from Bootstrap's sm, md, lg and xl breakpoints up, so their titles sit
+   in from the window's edges at every width. From xxl (1400px) up they keep
+   the 1260px they had before. */
+:root .sectionShell {
+  width: calc(100% - 2rem);
+}
+
+@media (min-width: 576px) {
+  :root .sectionShell {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  :root .sectionShell {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 992px) {
+  :root .sectionShell {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root .sectionShell {
+    max-width: 1140px;
+  }
+}
+
+@media (min-width: 1400px) {
+  :root .sectionShell {
+    max-width: 1260px;
+  }
+}
+
+/* The hero keeps its own, slightly wider content column than the default
+   1120px, free of the widths above. */
 .heroSection .sectionShell {
   width: min(1260px, calc(100% - 2rem));
+  max-width: none;
 }
 
 /* Below the hero's single-column breakpoint everything stacks in flow:
    statehouse, then the copy. */
-@media (max-width: 1100px) {
+@media (max-width: 1199px) {
   /* One column: the two-column template above is collapsed here.
      minmax(0, ...) rather than a bare 1fr, which can never be narrower than
      its content. */
@@ -939,7 +1017,7 @@
    window is narrower than the cap. Crossing between those is what made the
    whole layout jump. Fixed padding has no such crossover: the content always
    starts the same distance from the edge and the columns simply scale. */
-@media (min-width: 1101px) {
+@media (min-width: 1200px) {
   .heroSection .sectionShell {
     /* Fixed padding for the gutter, plus a cap so the content stops spreading
        on very wide displays. That pairing is what their layout does: global
@@ -975,7 +1053,7 @@
   flex-direction: column;
 }
 
-@media (min-width: 1101px) {
+@media (min-width: 1200px) {
   .heroCopy {
     max-width: 29.5rem;
     min-width: 29.5rem;
@@ -999,7 +1077,7 @@
   z-index: 1;
 }
 
-@media (min-width: 1101px) {
+@media (min-width: 1200px) {
   .heroSection.heroStatehouse .sectionShell {
     width: min(1120px, calc(100% - 2rem));
     max-width: none;
@@ -1166,7 +1244,7 @@
   line-height: 1.6;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1199px) {
   .heroSection.heroStatehouse .heroTopics {
     order: 3;
     justify-self: center;
@@ -1183,10 +1261,10 @@
 
   /* Stacked, the buttons stack too, centred under the centred copy, as this
      hero's buttons already do below 900px (the rule in the 900px block above,
-     repeated here for the widths in between). Room below them, so they do not
-     sit on the bottom edge. */
+     repeated here for the widths in between). No room below them: the topics
+     panel follows, and the grid's gap is the space between them. */
   .heroSection.heroStatehouse .heroContent {
-    padding-bottom: 3.5rem;
+    padding-bottom: 0;
   }
 
   .heroSection.heroStatehouse .heroActions {

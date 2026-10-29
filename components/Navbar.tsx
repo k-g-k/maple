@@ -144,10 +144,10 @@ const MobileNav: React.FC<{
         {flags().ballotQuestions ? (
           <NavbarLinkBallotQuestions handleClick={closeNav} />
         ) : null}
+        */}
         {flags().conferences ? (
           <NavbarLinkConferences handleClick={closeNav} />
         ) : null}
-        */}
         {flags().hearingsAndTranscriptions ? (
           <NavbarLinkHearings handleClick={closeNav} />
         ) : null}
@@ -337,13 +337,13 @@ const DesktopNav: React.FC<{
               <NavbarLinkBallotQuestions />
             </div>
           ) : null}
+          */}
 
           {flags().conferences ? (
             <div className={`align-self-center`}>
               <NavbarLinkConferences />
             </div>
           ) : null}
-          */}
 
           {flags().hearingsAndTranscriptions ? (
             <div className={`align-self-center`}>

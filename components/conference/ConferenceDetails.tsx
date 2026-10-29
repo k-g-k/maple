@@ -34,7 +34,12 @@ import { jumpTo } from "./navbar"
 import { PageColumn, Title } from "./styles"
 import { conferenceName, ConferencePageProps } from "./types"
 
-/** The mockup's column, widened to 1320 once the rail sits beside it. */
+/** The mockup's column, widened once the rail sits beside it to the navbar's
+ * (styles/globals.css, .desktop-navbar-bar: up to 1660px), its content inside
+ * the column's 2rem a side, so the rail starts under the logo. The hero above
+ * keeps the mockup's 1180. Doubled (&&) so it outranks PageColumn's own
+ * max-width whichever of the two is written to the page last, as a live
+ * reload of styles.ts writes PageColumn's again. */
 const Page = styled(PageColumn)`
   display: flex;
   gap: 1.5rem;
@@ -42,8 +47,10 @@ const Page = styled(PageColumn)`
   scroll-snap-stop: always;
 
   @media (min-width: 992px) {
-    max-width: 1320px;
-    gap: 3.5rem;
+    && {
+      max-width: calc(1660px + 4rem);
+      gap: 3.5rem;
+    }
   }
 `
 
@@ -205,18 +212,36 @@ function Details({
     setLanding(true)
   }
 
-  // The tabs hold under the title, so they need its height.
+  // The tabs hold under the title, so they need its height; the byline stops
+  // where the title's cell does, short of the share button beside it, so it
+  // needs that width (ConferenceByline.tsx).
   const main = useRef<HTMLDivElement>(null)
   const band = useRef<HTMLDivElement>(null)
-  usePinnedNavbar(main)
+  const titleCell = useRef<HTMLDivElement>(null)
+  // On the whole page, not only the main column, so the rail pins at the
+  // navbar's edge with the title (ConferenceRail.tsx).
+  usePinnedNavbar(top)
   useLayoutEffect(() => {
     const el = band.current
+    const cell = titleCell.current
     if (!el) return
-    const read = () =>
-      main.current?.style.setProperty("--title-h", `${el.offsetHeight}px`)
+    const read = () => {
+      // Exact sizes, not offsetHeight's whole pixels, which can fall short of
+      // a fractional height and leave a seam under it.
+      main.current?.style.setProperty(
+        "--title-h",
+        `${el.getBoundingClientRect().height}px`
+      )
+      if (cell)
+        main.current?.style.setProperty(
+          "--title-w",
+          `${cell.getBoundingClientRect().width}px`
+        )
+    }
     read()
     const ro = new ResizeObserver(read)
     ro.observe(el)
+    if (cell) ro.observe(cell)
     return () => ro.disconnect()
   }, [])
   const input = useMemo(
@@ -242,7 +267,7 @@ function Details({
           <Main ref={main}>
             <TitleBand ref={band} $top="var(--maple-navbar-height)" $z={14}>
               <TitleRow>
-                <TitleCell>
+                <TitleCell ref={titleCell}>
                   <div className="d-md-none">
                     <ConferencePicker
                       conferences={conferences}
@@ -256,7 +281,9 @@ function Details({
             </TitleBand>
             <ConferenceByline conference={conference} />
             <Band
-              $top="calc(var(--maple-navbar-height) + var(--title-h, 5rem))"
+              // 1px under the title's band, which sits above it, so no seam
+              // opens between the two however the heights round.
+              $top="calc(var(--maple-navbar-height) + var(--title-h, 5rem) - 1px)"
               $z={13}
             >
               <ConferenceTabs sections={decided ? SECTIONS : UNDECIDED} />

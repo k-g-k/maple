@@ -4,41 +4,54 @@ import { formatBillId } from "../formatting"
 import { Internal, maple } from "../links"
 import { conferenceName, ConferenceSummary } from "./types"
 
-/** In Nunito rather than Lexend, the conference names and bill numbers
- * alike. */
+/** In Lexend, the conference names and bill numbers alike. Pinned at the
+ * navbar's edge, as the title is (ConferenceDetails.tsx, TitleBand), and with
+ * the title's 1.625rem above its first row, so the two start level. */
 const Nav = styled.nav`
-  font-family: var(--maple-font-body);
+  font-family: var(--maple-font-heading);
   flex: 0 0 auto;
-  width: clamp(168px, 19vw, 236px);
+  width: clamp(200px, 22vw, 288px);
   position: sticky;
-  top: 1rem;
+  top: var(--maple-navbar-height);
   align-self: flex-start;
-  max-height: calc(100vh - 2rem);
+  max-height: calc(100vh - var(--maple-navbar-height));
   overflow-y: auto;
   padding: 1.625rem 0 3rem;
 `
 
+/** The light line both the rules between the rows and the selected row's
+ * outline are drawn in: a whole pixel of the site's border colour
+ * (rgba(15, 23, 42, 0.12)) at half its strength. A half-pixel line looks the
+ * same but drops out where the rail's edge falls between pixels. */
+const RULE = "rgba(15, 23, 42, 0.06)"
+
+/** The rows with a light rule between each. */
 const List = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+
+  li + li {
+    border-top: 1px solid ${RULE};
+  }
 `
 
-const RailRow = styled(Internal)<{ $on: boolean }>`
+/** `$filed`: the committee has filed its report, so its row is dimmed as a
+ * whole, unless it is the one being read. */
+const RailRow = styled(Internal)<{ $on: boolean; $filed: boolean }>`
   display: block;
   overflow: hidden;
   border-left: 3px solid
     ${({ $on }) => ($on ? "var(--maple-brand-primary)" : "transparent")};
-  padding: 0.4375rem 0.5rem 0.4375rem 0.6875rem;
+  padding: 0.75rem 0.75rem 0.75rem 1rem;
   border-radius: 0 var(--maple-radius-md) var(--maple-radius-md) 0;
   background: ${({ $on }) => ($on ? "var(--maple-surface-base)" : "none")};
-  box-shadow: ${({ $on }) =>
-    $on ? "inset 0 0 0 0.5px var(--maple-surface-border)" : "none"};
+  box-shadow: ${({ $on }) => ($on ? `inset 0 0 0 1px ${RULE}` : "none")};
   text-decoration: none;
   transition: background-color 120ms ease;
+  opacity: ${({ $on, $filed }) => ($filed && !$on ? 0.5 : 1)};
 
   &:hover {
     background: ${({ $on }) =>
@@ -47,7 +60,7 @@ const RailRow = styled(Internal)<{ $on: boolean }>`
 
   .name {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     line-height: 1.35;
     font-weight: ${({ $on }) => ($on ? 600 : 400)};
     color: ${({ $on }) =>
@@ -119,6 +132,7 @@ export function RailList({
             scroll={false}
             aria-current={c.id === current ? "page" : undefined}
             $on={c.id === current}
+            $filed={c.status === "reportFiled"}
           >
             <span className="name">{conferenceName(c)}</span>
             <span className="bills">

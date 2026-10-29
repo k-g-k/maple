@@ -14,11 +14,6 @@ const MARKS: Record<Testimony["position"], string> = {
   oppose: "#ff9219"
 }
 
-/** TEST ONLY, NOT TO SHIP. Where the rows' testimony links go: the dev
- * site, rather than this site, as the test rows are copies of testimony
- * there. The bill numbers still link within this site. */
-const TESTIMONY_SITE = "https://maple-dev.vercel.app"
-
 /** A row's testimony. `alsoOn` lists more bills to show after the first, as
  * "S.3184 & H.4767", for trying out a row about more than one bill. TEST
  * ONLY: `href` is where the row links, in place of the testimony's own
@@ -195,10 +190,9 @@ const FeedItem = ({
   const { t } = useTranslation("testimony")
   const testimonyHref =
     href ??
-    TESTIMONY_SITE +
-      (conferenceId
-        ? links.maple.conference({ court, id: conferenceId })
-        : links.maple.testimony({ publishedId: id }))
+    (conferenceId
+      ? links.maple.conference({ court, id: conferenceId })
+      : links.maple.testimony({ publishedId: id }))
 
   return (
     <Item className={variant === "quote" ? "quote-item" : undefined}>

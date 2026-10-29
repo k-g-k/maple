@@ -19,6 +19,10 @@ const Wrap = styled.div.attrs({ className: "conference-byline-wrap" })`
  * the title band, whose own 12px is the gap. */
 const Line = styled.p.attrs({ className: "conference-byline" })`
   margin: 0;
+  /* As wide as the title's cell above, so it stops where the share button
+     starts, or runs the full width where the button is on its own line or
+     not shown (ConferenceDetails.tsx). */
+  max-width: var(--title-w, none);
   font-family: var(--maple-font-body);
   font-size: 1.25rem;
   font-weight: 400;

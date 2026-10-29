@@ -25,6 +25,8 @@ export const seatsOf = (conferees: ConfereeView[]) =>
 const Svg = styled.svg`
   display: block;
   width: 100%;
+  /* Room to grow with a wider page, but no more than 300px. */
+  max-width: 300px;
   height: auto;
 
   /* The mockup's greys: empty seats in its sunken grey, every seat edged in

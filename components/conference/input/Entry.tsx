@@ -47,7 +47,7 @@ const Disc = styled.div`
   border-radius: 9999px;
   background: ${brand.soft};
   border: 1px solid ${brand.edge};
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: ${brand.ink};
@@ -64,14 +64,19 @@ const NameRow = styled.p`
   flex-wrap: wrap;
   gap: 6px;
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1;
   color: ${ink.strong};
 
+  /* The position chip a size up on the card; the newsfeed's keeps its own. */
+  .position-chip {
+    font-size: 0.8125rem;
+  }
+
   @media (max-width: 450px) {
     gap: 4px;
-    font-size: 0.8125rem;
+    font-size: 0.9375rem;
   }
 `
 
@@ -103,7 +108,7 @@ export function PositionChip({
   const { t } = useTranslation("conferences")
   const { chipBg, chipInk } = positionColours[position]
   return (
-    <Chip $bg={chipBg} $ink={chipInk}>
+    <Chip className="position-chip" $bg={chipBg} $ink={chipInk}>
       {t(`input.position.${position}.${long ? "long" : "short"}`)}
     </Chip>
   )
@@ -111,7 +116,7 @@ export function PositionChip({
 
 const Descriptor = styled.p`
   margin: 8px 0 0;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   line-height: 1.4;
   color: ${ink.faint};
   overflow: hidden;
@@ -121,7 +126,7 @@ const Descriptor = styled.p`
 
 const When = styled.span`
   margin-right: 2px;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   white-space: nowrap;
   color: ${ink.mid};
 `
@@ -155,7 +160,7 @@ const FootDate = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 12px;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: ${ink.mid};
 `
 

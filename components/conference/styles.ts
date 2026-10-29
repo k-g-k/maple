@@ -22,11 +22,10 @@ export const PageColumn = styled.div`
   }
 `
 
-/** The page heading: bold Nunito rather than the heading face, as the mockup
- * sets it. */
+/** The page heading, bold, in Lexend like the conference rail. */
 export const Title = styled.h1`
   margin: 0;
-  font-family: "Nunito", var(--bs-body-font-family);
+  font-family: var(--maple-font-heading);
   font-weight: 700;
   font-size: 1.75rem;
   line-height: 1.2;
